@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Link Details - URL Shortener{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Link Details</li>
+            </ol>
+        </nav>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Link Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 fw-bold">Short URL:</div>
+                    <div class="col-md-9">
+                        <a href="http://{{ domain }}/{{ url_obj.short_alias }}" target="_blank">
+                            http://{{ domain }}/{{ url_obj.short_alias }}
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-3 fw-bold">Original URL:</div>
+                    <div class="col-md-9">
+                        <a href="{{ url_obj.original_url }}" target="_blank">{{ url_obj.original_url }}</a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-3 fw-bold">Created:</div>
+                    <div class="col-md-9">{{ url_obj.creation_date }}</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-3 fw-bold">Total Clicks:</div>
+                    <div class="col-md-9">{{ click_count }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>Click Analytics</h3>
+                <a href="{% url 'delete_link' url_obj.short_alias %}" class="btn btn-danger">Delete Link</a>
+            </div>
+            <div class="card-body">
+                {% if clicks %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>User Agent</th>
+                                    <th>Referrer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for click in clicks %}
+                                <tr>
+                                    <td>{{ click.click_timestamp }}</td>
+                                    <td class="text-truncate" style="max-width: 300px;">{{ click.user_agent|default:"Not recorded" }}</td>
+                                    <td class="text-truncate" style="max-width: 300px;">{{ click.referrer|default:"Direct" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        This link hasn't been clicked yet.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

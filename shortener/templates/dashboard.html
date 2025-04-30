@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - URL Shortener{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Your Shortened URLs</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <p>Manage all your shortened URLs here.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Create New Short URL</a>
+        </div>
+
+        {% if user_urls %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Short URL</th>
+                            <th>Original URL</th>
+                            <th>Created</th>
+                            <th>Clicks</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for url in user_urls %}
+                        <tr>
+                            <td>
+                                <a href="http://{{ domain }}/{{ url.short_alias }}" target="_blank">
+                                    {{ url.short_alias }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ url.original_url }}" target="_blank" class="text-truncate d-inline-block" style="max-width: 300px;">
+                                    {{ url.original_url }}
+                                </a>
+                            </td>
+                            <td>{{ url.creation_date|date:"M d, Y" }}</td>
+                            <td>{{ url.click_count }}</td>
+                            <td>
+                                <a href="{% url 'link_detail' url.short_alias %}" class="btn btn-sm btn-info">Details</a>
+                                <a href="{% url 'delete_link' url.short_alias %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                You haven't created any shortened URLs yet. 
+                <a href="{% url 'home' %}">Create your first one!</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

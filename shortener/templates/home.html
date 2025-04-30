@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}URL Shortener - Home{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="text-center mb-4">
+            <h1 class="display-4"><b>URL Shortener</b></h1>
+            <p class="lead"><b>Transform long URLs into short, manageable links</b></p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.original_url.label_tag }}
+                        {{ form.original_url }}
+                        {% if form.original_url.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.original_url.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div style="text-align: center;">
+                    <button type="submit" class="btn btn-primary" style="background-color: #454545; color: white;">Shorten URL</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if shortened_url %}
+        <div class="mt-4 p-3 bg-light rounded text-center">
+            <h5>Your shortened URL:</h5>
+            <p class="shortened-url">http://{{ domain }}/{{ shortened_url.short_alias }}</p>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" value="http://{{ domain }}/{{ shortened_url.short_alias }}" id="shortenedUrl" readonly>
+                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">Copy</button>
+            </div>
+            <p class="small text-muted">
+                {% if user.is_authenticated %}
+                This link is saved to your account. View all your links in the <a href="{% url 'dashboard' %}">dashboard</a>.
+                {% else %}
+                <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">register</a> to save and manage your shortened URLs.
+                {% endif %}
+            </p>
+        </div>
+        <script>
+            function copyToClipboard() {
+                var copyText = document.getElementById("shortenedUrl");
+                copyText.select();
+                copyText.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(copyText.value);
+                alert("Copied to clipboard: " + copyText.value);
+            }
+        </script>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
